@@ -6,12 +6,43 @@ import java.util.Set;
 public class Practica1 {
 
     static public void separa(Set<String> unicos, Set<String> repetidos) {
+        Set<String> repes = new HashSet<String>();
+        repes.addAll(repetidos);
+        repes.retainAll(unicos);
 
+        Set<String> nicos = new HashSet<String>();
+        nicos.addAll(unicos);
+        nicos.addAll(repes);
+        nicos.removeAll(repes);
+
+        unicos.clear();
+        unicos.addAll(nicos);
+        repetidos.clear();
+        repetidos.addAll(repes);
     }
 
 
     static public Set <Integer> filtra(Iterator<Integer> iter) {
-        return null;
+
+        Set<Integer> all = new HashSet<Integer>();
+        Set<Integer> nomult = new HashSet<Integer>();
+
+        while (iter.hasNext()){
+            Integer e = iter.next();
+
+            if(!nomult.contains(e)){
+                nomult.add(e);
+            }
+            for(Integer n : all){
+                if(n%e==0) nomult.remove(n);
+                if(e%n==0) nomult.remove(e);
+            }
+            if(!all.contains(e) || e>0){
+                all.add(e);
+            }
+        }
+
+        return nomult;
     }
 
 
