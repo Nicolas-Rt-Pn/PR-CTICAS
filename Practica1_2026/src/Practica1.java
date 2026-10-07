@@ -6,39 +6,41 @@ import java.util.Set;
 public class Practica1 {
 
     static public void separa(Set<String> unicos, Set<String> repetidos) {
-        Set<String> repes = new HashSet<String>();
-        repes.addAll(repetidos);
-        repes.retainAll(unicos);
+        Set<String> comunes = new HashSet<>(unicos);
+        comunes.retainAll(repetidos);
 
-        Set<String> nicos = new HashSet<String>();
-        nicos.addAll(unicos);
-        nicos.addAll(repes);
-        nicos.removeAll(repes);
+        Set<String> nuevosUnicos = new HashSet<>(unicos);
+        nuevosUnicos.addAll(repetidos);
+        nuevosUnicos.removeAll(comunes);
 
         unicos.clear();
-        unicos.addAll(nicos);
+        unicos.addAll(nuevosUnicos);
+
         repetidos.clear();
-        repetidos.addAll(repes);
+        repetidos.addAll(comunes);
     }
 
 
-    static public Set <Integer> filtra(Iterator<Integer> iter) {
+    static public Set<Integer> filtra(Iterator<Integer> iter) {
+        Set<Integer> all = new HashSet<>();
+        Set<Integer> nomult = new HashSet<>();
 
-        Set<Integer> all = new HashSet<Integer>();
-        Set<Integer> nomult = new HashSet<Integer>();
-
-        while (iter.hasNext()){
+        while (iter.hasNext()) {
             Integer e = iter.next();
+            if (e > 0) {
+                if (!all.contains(e)) {
+                    nomult.add(e);
 
-            if(!nomult.contains(e)){
-                nomult.add(e);
-            }
-            for(Integer n : all){
-                if(n%e==0) nomult.remove(n);
-                if(e%n==0) nomult.remove(e);
-            }
-            if(!all.contains(e) || e>0){
-                all.add(e);
+                    for (Integer n : all) {
+                        if (n % e == 0) {
+                            nomult.remove(n);
+                        }
+                        if (e % n == 0) {
+                            nomult.remove(e);
+                        }
+                    }
+                    all.add(e);
+                }
             }
         }
 
@@ -46,15 +48,39 @@ public class Practica1 {
     }
 
 
-    static public Set<String> repetidos (Collection<Set<String>> col) {
+    static public Set<String> repetidos(Collection<Set<String>> col) {
+        Set<String> repes = new HashSet<>();
+        if (col == null || col.size() < 2) {
+            return repes;
+        }
 
-        return null;
+        Set<String>[] arraySets = col.toArray(new Set[0]);
+
+        for (int i = 0; i < arraySets.length; i++) {
+            for (int j = i + 1; j < arraySets.length; j++) {
+                Set<String> aux = new HashSet<>(arraySets[i]);
+                aux.retainAll(arraySets[j]);
+                repes.addAll(aux);
+            }
+        }
+
+        return repes;
     }
 
 
-    public static Set<Integer> interseccionImpares (Collection<Set<Integer>> col) {
-       return null;
+    public static Set<Integer> interseccionImpares(Collection<Set<Integer>> col) {
+        if (col == null || col.isEmpty()) {
+            return new HashSet<>();
+        }
+
+        Iterator<Set<Integer>> iter = col.iterator();
+        Set<Integer> resultado = new HashSet<>(iter.next());
+
+        while (iter.hasNext()) {
+            resultado.retainAll(iter.next());
+        }
+        resultado.removeIf(num -> num % 2 == 0);
+
+        return resultado;
     }
-
-
 }
